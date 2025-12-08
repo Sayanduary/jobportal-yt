@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:3001/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+export const BASE_URL = `${API_BASE_URL}/api/v1`;
 
 export const USER_API_END_POINT = `${BASE_URL}/user`;
 export const JOB_API_END_POINT = `${BASE_URL}/job`;

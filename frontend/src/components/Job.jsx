@@ -40,7 +40,13 @@ const Job = ({ job }) => {
           size="icon"
         >
           <Avatar>
-            <AvatarImage src={job?.company?.logo} />
+            <AvatarImage
+              src={
+                job?.company?.logo ||
+                "https://via.placeholder.com/150?text=Company"
+              }
+              alt={job?.company?.name}
+            />
           </Avatar>
         </Button>
         <div>

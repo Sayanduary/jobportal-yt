@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge } from "./ui/badge";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { useNavigate } from "react-router-dom";
 
 const LatestJobCards = ({ job }) => {
@@ -9,13 +10,24 @@ const LatestJobCards = ({ job }) => {
       onClick={() => navigate(`/description/${job._id}`)}
       className="p-5 rounded-lg shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg hover:border-[#0a66c2] dark:hover:border-[#70b5f9] transition-all duration-200"
     >
-      <div>
-        <h1 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
-          {job?.company?.name}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {job?.location || "India"}
-        </p>
+      <div className="flex items-center gap-3">
+        <Avatar className="h-12 w-12">
+          <AvatarImage
+            src={
+              job?.company?.logo ||
+              "https://via.placeholder.com/150?text=Company"
+            }
+            alt={job?.company?.name}
+          />
+        </Avatar>
+        <div>
+          <h1 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+            {job?.company?.name}
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {job?.location || "India"}
+          </p>
+        </div>
       </div>
       <div className="mt-3">
         <h1 className="font-bold text-lg my-2 text-[#0a66c2] dark:text-[#70b5f9]">
