@@ -32,7 +32,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div>
             <h2 className="text-2xl font-bold text-[#0a66c2] dark:text-[#70b5f9] mb-4">
-              JobPortal
+              careerX
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
               Connect with us
@@ -121,7 +121,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-gray-200 dark:border-gray-800">
           <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-            © {new Date().getFullYear()} JobPortal. All rights reserved.
+            © {new Date().getFullYear()} careerX. All rights reserved.
           </p>
         </div>
       </div>

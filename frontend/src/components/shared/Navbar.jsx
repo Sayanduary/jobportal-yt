@@ -39,7 +39,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Briefcase className="h-8 w-8 text-[#0a66c2]" />
           <h1 className="text-2xl font-bold text-[#0a66c2] dark:text-[#70b5f9]">
-            JobPortal
+            careerX
           </h1>
         </div>
         <div className="flex items-center gap-8">
