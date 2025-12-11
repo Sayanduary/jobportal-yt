@@ -17,6 +17,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   const logoutHandler = async () => {
     try {
       const res = await axios.get(`${USER_API_END_POINT}/logout`, {
@@ -36,7 +40,10 @@ const Navbar = () => {
   return (
     <div className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-50 shadow-sm">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4">
-        <div className="flex items-center gap-2">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={handleLogoClick}
+        >
           <Briefcase className="h-8 w-8 text-[#0a66c2]" />
           <h1 className="text-2xl font-bold text-[#0a66c2] dark:text-[#70b5f9]">
             careerX
@@ -60,9 +67,6 @@ const Navbar = () => {
                 </li>
                 <li className="hover:text-[#0a66c2] dark:hover:text-[#70b5f9] cursor-pointer transition-colors">
                   <Link to="/jobs">Jobs</Link>
-                </li>
-                <li className="hover:text-[#0a66c2] dark:hover:text-[#70b5f9] cursor-pointer transition-colors">
-                  <Link to="/browse">Browse</Link>
                 </li>
               </>
             )}

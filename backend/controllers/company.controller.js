@@ -97,7 +97,11 @@ export const updateCompany = async (req, res) => {
         // If logo file provided, upload to Cloudinary
         if (req.file) {
             const fileUri = getDataUri(req.file);
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+                resource_type: "auto",
+                type: "upload",
+                flags: ["keep_iptc"]
+            });
             updateData.logo = cloudResponse.secure_url;
         }
 

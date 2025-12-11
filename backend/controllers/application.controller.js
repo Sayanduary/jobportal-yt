@@ -138,7 +138,12 @@ export const updateStatus = async (req, res) => {
             return res.status(400).json({ message: "Invalid Application ID", success: false });
         }
 
-        const application = await Application.findById(applicationId);
+        const application = await Application.findById(applicationId).populate({
+            path: 'job',
+            select: 'title company',
+            populate: { path: 'company', select: 'name' }
+        });
+
         if (!application) {
             return res.status(404).json({
                 message: "Application not found",
@@ -149,6 +154,26 @@ export const updateStatus = async (req, res) => {
         application.status = status.toLowerCase();
         await application.save();
 
+        // Create notification for the applicant
+        const { User } = await import('../models/user.model.js');
+        const applicant = await User.findById(application.applicant);
+
+        if (applicant) {
+            const notificationMessage = status.toLowerCase() === 'accepted'
+                ? `Congratulations! Your application for ${application.job?.title} at ${application.job?.company?.name} has been accepted.`
+                : `Your application for ${application.job?.title} at ${application.job?.company?.name} has been ${status.toLowerCase()}.`;
+
+            applicant.notifications.push({
+                message: notificationMessage,
+                type: 'application_status',
+                jobId: application.job._id,
+                applicationId: application._id,
+                read: false
+            });
+
+            await applicant.save();
+        }
+
         return res.status(200).json({
             message: "Status updated successfully",
             success: true
@@ -156,6 +181,53 @@ export const updateStatus = async (req, res) => {
 
     } catch (error) {
         console.error("UPDATE STATUS ERROR:", error);
+        return res.status(500).json({ message: "Server error", success: false });
+    }
+};
+
+// DELETE APPLICATION (Student withdraws application)
+export const deleteApplication = async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+        const userId = req.id;
+
+        if (!mongoose.Types.ObjectId.isValid(applicationId)) {
+            return res.status(400).json({ message: "Invalid Application ID", success: false });
+        }
+
+        const application = await Application.findById(applicationId);
+        if (!application) {
+            return res.status(404).json({
+                message: "Application not found",
+                success: false
+            });
+        }
+
+        // Check if the user is the applicant
+        if (application.applicant.toString() !== userId) {
+            return res.status(403).json({
+                message: "Not authorized to delete this application",
+                success: false
+            });
+        }
+
+        // Remove application from job's applications array
+        await Job.findByIdAndUpdate(
+            application.job,
+            { $pull: { applications: applicationId } },
+            { new: true }
+        );
+
+        // Delete the application
+        await Application.findByIdAndDelete(applicationId);
+
+        return res.status(200).json({
+            message: "Application withdrawn successfully",
+            success: true
+        });
+
+    } catch (error) {
+        console.error("DELETE APPLICATION ERROR:", error);
         return res.status(500).json({ message: "Server error", success: false });
     }
 };
