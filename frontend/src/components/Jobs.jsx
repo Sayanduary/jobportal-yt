@@ -5,13 +5,14 @@ import Job from "./Job";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import useGetAllJobs from "@/hooks/useGetAllJobs";
-
-// const jobsArray = [1, 2, 3, 4, 5, 6, 7, 8];
+import { Filter, X } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Jobs = () => {
   useGetAllJobs();
   const { jobs, filters } = useSelector((store) => store.job);
   const [filterJobs, setFilterJobs] = useState(jobs);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   useEffect(() => {
     let filteredJobs = [...jobs];
@@ -119,23 +120,80 @@ const Jobs = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navbar />
-      <div className="max-w-7xl mx-auto mt-5 px-4">
-        <div className="flex gap-5">
-          <div className="w-20%">
+      <div className="max-w-7xl mx-auto mt-3 md:mt-5 px-3 md:px-4 lg:px-6">
+        {/* Mobile Filter Button */}
+        <div className="lg:hidden mb-4">
+          <Button
+            onClick={() => setShowMobileFilter(!showMobileFilter)}
+            className="w-full bg-[#0a66c2] hover:bg-[#004182] dark:bg-[#70b5f9] dark:hover:bg-[#5a9ad8] flex items-center justify-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            {showMobileFilter ? "Hide Filters" : "Show Filters"}
+          </Button>
+        </div>
+
+        <div className="flex gap-4 lg:gap-5">
+          {/* Desktop Filter - Always visible on large screens */}
+          <div className="hidden lg:block w-64 xl:w-72 flex-shrink-0">
             <FilterCard />
           </div>
+
+          {/* Mobile Filter - Shown as overlay */}
+          {showMobileFilter && (
+            <div
+              className="lg:hidden fixed inset-0 bg-black/50 z-40"
+              onClick={() => setShowMobileFilter(false)}
+            >
+              <div
+                className="absolute left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-gray-900 overflow-y-auto shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="sticky top-0 bg-white dark:bg-gray-900 p-4 border-b dark:border-gray-800 flex justify-between items-center z-10">
+                  <h2 className="font-bold text-lg text-gray-900 dark:text-gray-100">
+                    Filters
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMobileFilter(false)}
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+                <FilterCard onFilterApply={() => setShowMobileFilter(false)} />
+              </div>
+            </div>
+          )}
+
+          {/* Jobs Grid */}
           {filterJobs.length <= 0 ? (
-            <span className="text-gray-900 dark:text-gray-100 text-xl">
-              Job not found
-            </span>
+            <div className="flex-1 flex items-center justify-center py-20">
+              <div className="text-center">
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  No Jobs Found
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Try adjusting your filters to see more results
+                </p>
+              </div>
+            </div>
           ) : (
-            <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
-              <div className="grid grid-cols-3 gap-4">
+            <div className="flex-1 h-auto lg:h-[88vh] lg:overflow-y-auto pb-5">
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing{" "}
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    {filterJobs.length}
+                  </span>{" "}
+                  jobs
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
                 {filterJobs.map((job) => (
                   <motion.div
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
                     key={job?._id}
                   >
